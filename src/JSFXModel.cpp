@@ -3,6 +3,7 @@
 #include "../include/JSFXModuleWidget.hpp"
 #include "../include/JsusFxVCV.hpp"
 #include "../dep/jsusfx-0.4.0b1b/src/jsusfx.h"
+#include "../include/JsusFxGfx_VCV.hpp"
 
 using namespace rack;
 using namespace std;
@@ -14,10 +15,18 @@ ModuleWidget *JSFXModel::createModuleWidget()
   auto jsusfx = new JsusFxVCV(fxpath, effectPath);
   jsusfx->init();
 
-  auto compiled = jsusfx->compile(fxpath, fullpath, 0);
+  jsusfx->gfx = new JsusFxGfx_VCV();
+  jsusfx->gfx->init(jsusfx->m_vm);
+
+  auto compiled = jsusfx->compile(fxpath, fullpath, JsusFx::kCompileFlag_CompileGraphicsSection);
   if (!compiled) {
-    warn("JSFX Load Failed: %s", effectPath.c_str());
-    return NULL;
+    warn("JSFX With Gfx Load Failed: %s", effectPath.c_str());
+  
+    auto compiled = jsusfx->compile(fxpath, fullpath, 0);
+    if (!compiled) {
+      warn("JSFX Without Gfx Load Failed: %s", effectPath.c_str());
+      return NULL;
+    }
   }
 
   auto module = new JSFXModule(jsusfx);

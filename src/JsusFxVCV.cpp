@@ -27,6 +27,14 @@ int JsusFxVCV::numsliders() {
   return slidercount;
 }
 
+bool JsusFxVCV::usesBlocks() {
+  return codeBlock != NULL;
+}
+
+bool JsusFxVCV::usesGfx() {
+  return codeGfx != NULL;
+}
+
 void JsusFxVCV::displayMsg(const char *fmt, ...) {
     char output[4096];
     va_list argptr;

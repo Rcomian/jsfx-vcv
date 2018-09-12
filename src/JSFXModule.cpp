@@ -3,7 +3,7 @@
 #include "../include/JSFXModule.hpp"
 #include "engine.hpp"
 
-JSFXModule::JSFXModule(JsusFxVCV* jsusfx) : Module(jsusfx->numsliders() * 2, jsusfx->numInputs + jsusfx->numsliders(), jsusfx->numOutputs, 0) {
+JSFXModule::JSFXModule(JsusFxVCV* jsusfx) : Module(jsusfx->numsliders() * 2, 1 + jsusfx->numInputs + jsusfx->numsliders(), jsusfx->numOutputs, 0) {
   _jsusfx = jsusfx;
 
   for (buffpos = 0; buffpos < 64; buffpos += 1) {
@@ -48,6 +48,10 @@ void JSFXModule::onSampleRateChange() {
 
 
 void JSFXModule::step() {
+  auto tempoinput = _jsusfx->numInputs + _jsusfx->numsliders();
+  if (inputs[tempoinput].active) {
+    *_jsusfx->tempo = 120 + (inputs[tempoinput].value * 120);
+  }
 
   for (int c = 0; c < _jsusfx->numInputs; c += 1) {
     inbuffer[c][buffpos] = inputs[c].value / 20.f;

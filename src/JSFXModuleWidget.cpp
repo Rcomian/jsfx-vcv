@@ -1,5 +1,5 @@
 #include "../include/JSFXModuleWidget.hpp"
-
+#include "../include/JsusFxGfx_VCV.hpp"
 using namespace rack;
 
 struct GraphicsCursor {
@@ -15,6 +15,10 @@ struct GraphicsCursor {
 
   void SetY(float newY) {
     y = newY;
+  }
+
+  void SetHeight(float newHeight) {
+    totalheight = newHeight;
   }
 
   void StartColumn(float width, float height) {
@@ -39,7 +43,7 @@ struct GraphicsCursor {
       height = columnItemHeight;
     }
 
-    if (y + height > RACK_GRID_HEIGHT) {
+    if (y > columnTop && y + height > totalheight) {
       y = columnTop;
       x += columnItemWidth;
     }
@@ -53,6 +57,7 @@ struct GraphicsCursor {
 
   float x;
   float y;
+  float totalheight;
 
   float columnTop;
   float columnItemWidth;
@@ -61,7 +66,18 @@ struct GraphicsCursor {
 };
 
 JSFXModuleWidget::JSFXModuleWidget(JSFXModule *module) : ModuleWidget(module) {
-  box.size = Vec(RACK_GRID_WIDTH * 50, RACK_GRID_HEIGHT);
+  _jsusfx = module->_jsusfx;
+  _jsusfx_gfx = static_cast<JsusFxGfx_VCV*>(module->_jsusfx->gfx);
+  auto module_height = RACK_GRID_HEIGHT;
+
+  if (_jsusfx->usesGfx()) {
+    info("Module uses graphics: %d %d", _jsusfx->gfx_w, _jsusfx->gfx_h);
+    if (_jsusfx->gfx_h > RACK_GRID_HEIGHT - (RACK_GRID_WIDTH * 3)) {
+      module_height = RACK_GRID_HEIGHT * ceil(_jsusfx->gfx_h / RACK_GRID_HEIGHT);
+    }
+  }
+
+  box.size = Vec(RACK_GRID_WIDTH * 50, module_height);
 
   {
     panel = new LightPanel();
@@ -73,9 +89,24 @@ JSFXModuleWidget::JSFXModuleWidget(JSFXModule *module) : ModuleWidget(module) {
   GraphicsCursor cursor;
   cursor.MoveRight(RACK_GRID_WIDTH/2);
   cursor.SetY(RACK_GRID_WIDTH * 3);
+  cursor.SetHeight(module_height);
 
   // Add inputs
   cursor.StartColumn(85, 30);
+
+  // Add tempo input
+  auto itempos = cursor.NextBox();
+  {
+    auto label = new Label();
+    label->color = nvgRGB(0x00, 0x00, 0x00);
+    label->text = "BPM";
+    label->box.pos.x = itempos.x + 20;
+    label->box.pos.y = itempos.y + 2; 
+    label->box.size.x = 65;
+    addChild(label);
+  }
+  addInput(Port::create<PJ301MPort>(Vec(itempos.x, itempos.y), Port::INPUT, module, module->_jsusfx->numInputs + module->_jsusfx->numsliders()));
+
   for (int inputid = 0; inputid < module->_jsusfx->numInputs; inputid += 1) {
     auto itempos = cursor.NextBox();
     addInput(Port::create<PJ301MPort>(Vec(itempos.x, itempos.y), Port::INPUT, module, inputid));
@@ -293,6 +324,11 @@ JSFXModuleWidget::JSFXModuleWidget(JSFXModule *module) : ModuleWidget(module) {
   }
   cursor.EndColumn(RACK_GRID_WIDTH/2);
 
+  // Add graphics
+  cursor.StartColumn(_jsusfx->gfx_w, _jsusfx->gfx_h);
+  _gfx_point = cursor.NextBox();
+  cursor.EndColumn(RACK_GRID_WIDTH/2);
+
   // Set panel size
   box.size.x = ceil(cursor.x / RACK_GRID_WIDTH) * RACK_GRID_WIDTH;
   panel->box.size.x = box.size.x;
@@ -311,9 +347,28 @@ JSFXModuleWidget::JSFXModuleWidget(JSFXModule *module) : ModuleWidget(module) {
 
   // Add screws
   addChild(Widget::create<ScrewSilver>(Vec(15, 0)));
-  addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
+  addChild(Widget::create<ScrewSilver>(Vec(15, module_height - 15)));
   addChild(Widget::create<ScrewSilver>(Vec(box.size.x - 30, 0)));
-  addChild(Widget::create<ScrewSilver>(Vec(box.size.x - 30, 365)));
+  addChild(Widget::create<ScrewSilver>(Vec(box.size.x - 30, module_height - 15)));
 
 }
 
+void JSFXModuleWidget::draw(NVGcontext *vg) {
+  ModuleWidget::draw(vg);
+
+  if (_jsusfx->usesGfx()) {
+    nvgScissor(vg, 0, 0, box.size.x, box.size.y);
+
+    // Background
+    nvgBeginPath(vg);
+    nvgRect(vg, _gfx_point.x, _gfx_point.y, _jsusfx->gfx_w, _jsusfx->gfx_h);
+    nvgFillColor(vg, nvgRGB(0x00, 0x00, 0x00));
+    nvgFill(vg);
+
+    _jsusfx_gfx->vg = vg;
+    _jsusfx->draw();
+
+  	nvgResetScissor(vg);
+  }
+
+}

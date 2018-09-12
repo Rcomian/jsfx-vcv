@@ -11,6 +11,9 @@ public:
     std::string displayname();
     int numsliders();
 
+    bool usesBlocks();
+    bool usesGfx();
+
     void displayMsg(const char *fmt, ...) override;
 
     void displayError(const char *fmt, ...) override;
