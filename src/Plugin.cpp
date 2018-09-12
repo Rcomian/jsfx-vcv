@@ -1,6 +1,7 @@
 #include "../include/Plugin.hpp"
 #include "../include/JSFXModel.hpp"
 #include "../include/JsusFxVCV.hpp"
+#include "../include/JsusFxGfx_VCV.hpp"
 #include <string>
 
 #include <sys/stat.h>
@@ -30,7 +31,10 @@ void loadEffectsInPath(std::string path) {
 			auto jsusfx = new JsusFxVCV(fxpath, jsfxPath);
 			jsusfx->init();
 
-			auto compiled = jsusfx->compile(fxpath, jsfxPath, 0);
+			jsusfx->gfx = new JsusFxGfx_VCV();
+			jsusfx->gfx->init(jsusfx->m_vm);
+
+			auto compiled = jsusfx->compile(fxpath, jsfxPath, JsusFx::kCompileFlag_CompileGraphicsSection);
 			if (!compiled) {
 				warn("JSFX Load Failed: %s", jsfxPath.c_str());
 				continue;
@@ -42,11 +46,23 @@ void loadEffectsInPath(std::string path) {
 
 			auto model = new JSFXModel();
 			model->author = "JSFX";
-			model->slug = effectPath;
+			model->slug = "nogfx-" + effectPath;
 			model->name = jsusfx->displayname();
 			model->effectPath = effectPath;
 
 			plugin->addModel(model);
+
+			if (jsusfx->usesGfx()) {
+				info("Found graphical effect: %s", jsusfx->displayname().c_str());
+				auto model = new JSFXModel();
+				model->author = "JSFX";
+				model->slug = "gfx-" + effectPath;
+				model->name = jsusfx->displayname() + "(GFX)";
+				model->effectPath = effectPath;
+				model->useGfx = true;
+
+				plugin->addModel(model);
+			}
 		}
 	}
 }

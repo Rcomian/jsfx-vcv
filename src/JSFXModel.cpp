@@ -18,7 +18,12 @@ ModuleWidget *JSFXModel::createModuleWidget()
   jsusfx->gfx = new JsusFxGfx_VCV();
   jsusfx->gfx->init(jsusfx->m_vm);
 
-  auto compiled = jsusfx->compile(fxpath, fullpath, JsusFx::kCompileFlag_CompileGraphicsSection);
+  int flags = 0;
+  if (useGfx) {
+    flags = JsusFx::kCompileFlag_CompileGraphicsSection;
+  }
+
+  auto compiled = jsusfx->compile(fxpath, fullpath, flags);
   if (!compiled) {
     warn("JSFX With Gfx Load Failed: %s", effectPath.c_str());
   
