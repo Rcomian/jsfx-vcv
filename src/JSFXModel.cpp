@@ -29,8 +29,5 @@ ModuleWidget *JSFXModel::createModuleWidget()
 ModuleWidget *JSFXModel::createModuleWidgetNull()
 {
   fatal("Creating a NULL JSFX ModuleWidget is not supported");
-  return null;
-  // auto moduleWidget = new JSFXModuleWidget(NULL);
-  // moduleWidget->model = this;
-  // return moduleWidget;
+  return NULL;
 }
