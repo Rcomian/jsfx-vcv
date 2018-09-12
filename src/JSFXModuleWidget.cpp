@@ -73,6 +73,10 @@ JSFXModuleWidget::JSFXModuleWidget(JSFXModule *module) : ModuleWidget(module) {
   if (_jsusfx->usesGfx()) {
     info("Module requests graphics: %d %d", _jsusfx->gfx_w, _jsusfx->gfx_h);
 
+    // If they don't care about graphics size, give them 100
+    if (_jsusfx->gfx_w == 0) { _jsusfx->gfx_w = 100; }
+    if (_jsusfx->gfx_h == 0) { _jsusfx->gfx_h = 100; }
+
     float top_padding = RACK_GRID_WIDTH * 3;
     float bottom_padding = RACK_GRID_WIDTH;
 

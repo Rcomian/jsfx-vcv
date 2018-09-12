@@ -28,15 +28,15 @@ struct JsusFxGfx_VCV : JsusFxGfx {
 	virtual void gfx_setpixel(EEL_F r, EEL_F g, EEL_F b) override;
 	virtual void gfx_getpixel(EEL_F * r, EEL_F * g, EEL_F * b) override;
 
-	// virtual EEL_F gfx_loadimg(JsusFx & jsusFx, int img, EEL_F loadFrom) override;
+  virtual EEL_F gfx_loadimg(JsusFx & jsusFx, int img, EEL_F loadFrom) override;
 	virtual void gfx_getimgdim(EEL_F img, EEL_F * w, EEL_F * h) override;
-	// virtual EEL_F gfx_setimgdim(int img, EEL_F * w, EEL_F * h) override;
+	virtual EEL_F gfx_setimgdim(int img, EEL_F * w, EEL_F * h) override;
 	
-	// virtual EEL_F gfx_setfont(int np, EEL_F ** parms) override;
-	// virtual EEL_F gfx_getfont(int np, EEL_F ** parms) override;
+	virtual EEL_F gfx_setfont(int np, EEL_F ** parms) override;
+	virtual EEL_F gfx_getfont(int np, EEL_F ** parms) override;
 	
-	// virtual EEL_F gfx_showmenu(EEL_F ** parms, int nparms) override;
-	// virtual EEL_F gfx_setcursor(EEL_F ** parms, int nparms) override;
+	virtual EEL_F gfx_showmenu(EEL_F ** parms, int nparms) override;
+	virtual EEL_F gfx_setcursor(EEL_F ** parms, int nparms) override;
 	
 	virtual void gfx_blurto(EEL_F x, EEL_F y) override;
 
@@ -44,5 +44,5 @@ struct JsusFxGfx_VCV : JsusFxGfx {
 	virtual void gfx_blitext(EEL_F img, EEL_F * coords, EEL_F angle) override;
 	virtual void gfx_blitext2(int mp, EEL_F ** params, int blitmode) override;
 
-  void drawString(char * str);
+  rack::Vec drawString(const char * str);
 };
