@@ -308,5 +308,12 @@ JSFXModuleWidget::JSFXModuleWidget(JSFXModule *module) : ModuleWidget(module) {
     label->alignment = Label::CENTER_ALIGNMENT;
     addChild(label);
   }
+
+  // Add screws
+  addChild(Widget::create<ScrewSilver>(Vec(15, 0)));
+  addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
+  addChild(Widget::create<ScrewSilver>(Vec(box.size.x - 30, 0)));
+  addChild(Widget::create<ScrewSilver>(Vec(box.size.x - 30, 365)));
+
 }
 
