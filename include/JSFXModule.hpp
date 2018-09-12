@@ -8,6 +8,7 @@ struct JSFXModule : rack::Module {
 	JSFXModule(JsusFxVCV* jsusfx);
   ~JSFXModule();
 	void step() override;
+	void onSampleRateChange() override;
 
   float inbuffer[64][64];
   float outbuffer[64][64];

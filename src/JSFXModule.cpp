@@ -23,6 +23,25 @@ JSFXModule::~JSFXModule() {
   delete _jsusfx;
 }
 
+void JSFXModule::onSampleRateChange() {
+
+  _jsusfx->prepare(engineGetSampleRate(), buffsize);
+
+  uint sliderid = 0;
+  for (auto slider : _jsusfx->sliders) {
+
+    // Ensure all sliders are recalculated
+    if (slider.exists) {
+      _jsusfx->moveSlider(sliderid, slider.max);
+      _jsusfx->moveSlider(sliderid, slider.min);
+    }
+    sliderid += 1;
+
+  }
+
+}
+
+
 void JSFXModule::step() {
 
   for (int c = 0; c < _jsusfx->numInputs; c += 1) {
