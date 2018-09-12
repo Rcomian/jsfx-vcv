@@ -54,11 +54,11 @@ void JSFXModule::step() {
   }
 
   for (int c = 0; c < _jsusfx->numInputs; c += 1) {
-    inbuffer[c][buffpos] = inputs[c].value / 20.f;
+    inbuffer[c][buffpos] = inputs[c].value / 5.f;
   }
 
   for (int c = 0; c < _jsusfx->numOutputs; c += 1) {
-    outputs[c].value = outbuffer[c][buffpos] * 20.f;
+    outputs[c].value = outbuffer[c][buffpos] * 5.f;
   }
 
   buffpos = (buffpos + 1) % buffsize;

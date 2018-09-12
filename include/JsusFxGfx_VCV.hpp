@@ -43,4 +43,6 @@ struct JsusFxGfx_VCV : JsusFxGfx {
 	virtual void gfx_blit(EEL_F img, EEL_F scale, EEL_F rotate) override;
 	virtual void gfx_blitext(EEL_F img, EEL_F * coords, EEL_F angle) override;
 	virtual void gfx_blitext2(int mp, EEL_F ** params, int blitmode) override;
+
+  void drawString(char * str);
 };

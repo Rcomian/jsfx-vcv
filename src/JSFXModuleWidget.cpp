@@ -71,10 +71,16 @@ JSFXModuleWidget::JSFXModuleWidget(JSFXModule *module) : ModuleWidget(module) {
   auto module_height = RACK_GRID_HEIGHT;
 
   if (_jsusfx->usesGfx()) {
-    info("Module uses graphics: %d %d", _jsusfx->gfx_w, _jsusfx->gfx_h);
-    if (_jsusfx->gfx_h > RACK_GRID_HEIGHT - (RACK_GRID_WIDTH * 3)) {
-      module_height = RACK_GRID_HEIGHT * ceil(_jsusfx->gfx_h / RACK_GRID_HEIGHT);
+    info("Module requests graphics: %d %d", _jsusfx->gfx_w, _jsusfx->gfx_h);
+
+    float top_padding = RACK_GRID_WIDTH * 3;
+    float bottom_padding = RACK_GRID_WIDTH;
+
+    if (_jsusfx->gfx_h > RACK_GRID_HEIGHT - top_padding - bottom_padding) {
+      module_height = RACK_GRID_HEIGHT * ceil((_jsusfx->gfx_h + top_padding + bottom_padding) / RACK_GRID_HEIGHT);
     }
+
+    _jsusfx->gfx_h = module_height - top_padding - bottom_padding;
   }
 
   box.size = Vec(RACK_GRID_WIDTH * 50, module_height);
@@ -357,15 +363,23 @@ void JSFXModuleWidget::draw(NVGcontext *vg) {
   ModuleWidget::draw(vg);
 
   if (_jsusfx->usesGfx()) {
-    nvgScissor(vg, 0, 0, box.size.x, box.size.y);
+    nvgScissor(vg, _gfx_point.x, _gfx_point.y, _jsusfx->gfx_w, _jsusfx->gfx_h);
+
+    nvgTranslate(vg, _gfx_point.x, _gfx_point.y);
 
     // Background
     nvgBeginPath(vg);
-    nvgRect(vg, _gfx_point.x, _gfx_point.y, _jsusfx->gfx_w, _jsusfx->gfx_h);
+    nvgRect(vg, 0, 0, _jsusfx->gfx_w, _jsusfx->gfx_h);
     nvgFillColor(vg, nvgRGB(0x00, 0x00, 0x00));
     nvgFill(vg);
 
     _jsusfx_gfx->vg = vg;
+    *_jsusfx_gfx->m_gfx_w = _jsusfx->gfx_w;
+    *_jsusfx_gfx->m_gfx_h = _jsusfx->gfx_h;
+    *_jsusfx_gfx->m_gfx_r = 1;
+    *_jsusfx_gfx->m_gfx_g = 1;
+    *_jsusfx_gfx->m_gfx_b = 1;
+    *_jsusfx_gfx->m_gfx_a = 1;
     _jsusfx->draw();
 
   	nvgResetScissor(vg);
