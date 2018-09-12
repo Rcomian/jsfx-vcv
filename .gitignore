@@ -1,0 +1,9 @@
+/build
+/dist
+/plugin.dylib
+/plugin.dll
+/plugin.so
+.DS_Store
+dep/jsusfx-0.4.0b1b*
+dep/v0.4.0b1b*
+
