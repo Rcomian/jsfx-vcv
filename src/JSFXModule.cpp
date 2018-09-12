@@ -30,10 +30,15 @@ void JSFXModule::onSampleRateChange() {
   uint sliderid = 0;
   for (auto slider : _jsusfx->sliders) {
 
-    // Ensure all sliders are recalculated
+    // Ensure all sliders are recalculated by moving them away from their current value then back again
     if (slider.exists) {
-      _jsusfx->moveSlider(sliderid, slider.max);
-      _jsusfx->moveSlider(sliderid, slider.min);
+      float current = slider.getValue();
+      if (current != slider.max) {
+        _jsusfx->moveSlider(sliderid, slider.max);
+      } else {
+        _jsusfx->moveSlider(sliderid, slider.min);
+      }
+      _jsusfx->moveSlider(sliderid, current);
     }
     sliderid += 1;
 
