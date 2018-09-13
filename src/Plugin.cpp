@@ -19,11 +19,12 @@ using namespace std;
 Plugin *plugin;
 std::string localJSFX;
 
-void loadEffectsInPath(std::string path) {
+int loadEffectsInPath(std::string path) {
+	int count = 0;
 	for (std::string jsfxPath : systemListEntries(path)) {
 		if (systemIsDirectory(jsfxPath)) {
 
-			loadEffectsInPath(jsfxPath);
+			count += loadEffectsInPath(jsfxPath);
 
 		} else {
 
@@ -39,6 +40,8 @@ void loadEffectsInPath(std::string path) {
 				warn("JSFX Load Failed: %s", jsfxPath.c_str());
 				continue;
 			}
+
+			count++;
 
 			info("JSFX Loaded: %s", jsusfx->displayname().c_str());
 
@@ -65,6 +68,8 @@ void loadEffectsInPath(std::string path) {
 			}
 		}
 	}
+
+	return count;
 }
 
 void init(Plugin *p) {
@@ -74,7 +79,10 @@ void init(Plugin *p) {
 
 	localJSFX = assetLocal("jsfx");
 	mkdir(localJSFX.c_str(), 0755);
-	loadEffectsInPath(localJSFX);
+	auto loaded = loadEffectsInPath(localJSFX);
+	if (loaded == 0) {
+		p->addModel(modelInstructionsPanel);
+	}
 
 	// Any other plugin initialization may go here.
 	// As an alternative, consider lazy-loading assets and lookup tables when your module is created to reduce startup times of Rack.

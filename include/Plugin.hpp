@@ -7,3 +7,5 @@ using namespace rack;
 
 // Forward-declare the Plugin, defined in Template.cpp
 extern Plugin *plugin;
+
+extern Model *modelInstructionsPanel;
