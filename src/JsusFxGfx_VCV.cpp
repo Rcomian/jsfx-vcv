@@ -151,7 +151,7 @@ Vec JsusFxGfx_VCV::drawString(const char* str) {
 
   nvgBeginPath(vg);
   nvgFillColor(vg, nvgRGBA((*m_gfx_r) * 255, (*m_gfx_g) * 255, (*m_gfx_b) * 255, (*m_gfx_a) * 255));
-  nvgText(vg, bounds[0],bounds[3], str, NULL);
+  nvgText(vg, bounds[0],bounds[3] + ((bounds[3] - bounds[1])/2.f), str, NULL);
   nvgFill(vg);
   *m_gfx_texth = bounds[3] - bounds[1];
 
@@ -427,7 +427,6 @@ void JsusFxGfx_VCV::gfx_drawstr(void * opaque, EEL_F ** parms, int np, int mode)
   int parms_used = 0;
   std::string str = _gfx_sprintf(((JsusFx*)opaque), np, parms, &parms_used);
 
-  debug("Draw string: %s %d", str.c_str(), parms_used);
 
   auto size = drawString(str.c_str());
 
