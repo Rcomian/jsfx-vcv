@@ -65,9 +65,9 @@ struct GraphicsCursor {
   bool columnUsed;
 };
 
-JSFXModuleWidget::JSFXModuleWidget(JSFXModule *module) : ModuleWidget(module) {
-  _jsusfx = module->_jsusfx;
-  _jsusfx_gfx = static_cast<JsusFxGfx_VCV*>(module->_jsusfx->gfx);
+JSFXModuleWidget::JSFXModuleWidget(JSFXModule *module, JsusFxVCV* jsusfx) : ModuleWidget(module) {
+  _jsusfx = jsusfx;
+  _jsusfx_gfx = static_cast<JsusFxGfx_VCV*>(jsusfx->gfx);
   auto module_height = RACK_GRID_HEIGHT;
 
   if (_jsusfx->usesGfx()) {
@@ -115,9 +115,9 @@ JSFXModuleWidget::JSFXModuleWidget(JSFXModule *module) : ModuleWidget(module) {
     label->box.size.x = 65;
     addChild(label);
   }
-  addInput(Port::create<PJ301MPort>(Vec(itempos.x, itempos.y), Port::INPUT, module, module->_jsusfx->numInputs + module->_jsusfx->numsliders()));
+  addInput(Port::create<PJ301MPort>(Vec(itempos.x, itempos.y), Port::INPUT, module, _jsusfx->numInputs + _jsusfx->numsliders()));
 
-  for (int inputid = 0; inputid < module->_jsusfx->numInputs; inputid += 1) {
+  for (int inputid = 0; inputid < _jsusfx->numInputs; inputid += 1) {
     auto itempos = cursor.NextBox();
     addInput(Port::create<PJ301MPort>(Vec(itempos.x, itempos.y), Port::INPUT, module, inputid));
 
@@ -139,17 +139,17 @@ JSFXModuleWidget::JSFXModuleWidget(JSFXModule *module) : ModuleWidget(module) {
   // Add Sliders
   int paramindex = 0;
   cursor.StartColumn(170, 55);
-  int numsliders = module->_jsusfx->numsliders();
+  int numsliders = _jsusfx->numsliders();
   int cvoffset = 30;
   int trimpotleft = 3;
   int trimpottop = 28;
-  for (auto slider : module->_jsusfx->sliders) {
+  for (auto slider : _jsusfx->sliders) {
     if (slider.exists) {
 
       if (!slider.isEnum) {
         auto itempos = cursor.NextBox(70);
 
-        addInput(Port::create<PJ301MPort>(Vec(itempos.x, itempos.y), Port::INPUT, module, module->_jsusfx->numInputs + paramindex));
+        addInput(Port::create<PJ301MPort>(Vec(itempos.x, itempos.y), Port::INPUT, module, _jsusfx->numInputs + paramindex));
         addParam(ParamWidget::create<Trimpot>(Vec(itempos.x + trimpotleft, itempos.y + trimpottop), module, numsliders + paramindex, -1, 1, 0));
 
         if (slider.inc > 0) {
@@ -172,10 +172,10 @@ JSFXModuleWidget::JSFXModuleWidget(JSFXModule *module) : ModuleWidget(module) {
           addChild(label);
         }
 
-      } else if (slider.enumNames.size() == 2) {
+      } else if (slider.max == 1) { // 0 or 1
         auto itempos = cursor.NextBox(70);
 
-        addInput(Port::create<PJ301MPort>(Vec(itempos.x, itempos.y + 18), Port::INPUT, module, module->_jsusfx->numInputs + paramindex));
+        addInput(Port::create<PJ301MPort>(Vec(itempos.x, itempos.y + 18), Port::INPUT, module, _jsusfx->numInputs + paramindex));
         addParam(ParamWidget::create<Trimpot>(Vec(itempos.x + trimpotleft, itempos.y + trimpottop + 18), module, numsliders + paramindex, -1, 1, 0));
 
         {
@@ -212,10 +212,10 @@ JSFXModuleWidget::JSFXModuleWidget(JSFXModule *module) : ModuleWidget(module) {
           label->box.size.x = 130;
           addChild(label);
         }
-      } else if (slider.enumNames.size() == 3) {
+      } else if (slider.max == 2) { // 0, 1 or 2
         auto itempos = cursor.NextBox(80);
 
-        addInput(Port::create<PJ301MPort>(Vec(itempos.x, itempos.y + 18), Port::INPUT, module, module->_jsusfx->numInputs + paramindex));
+        addInput(Port::create<PJ301MPort>(Vec(itempos.x, itempos.y + 18), Port::INPUT, module, _jsusfx->numInputs + paramindex));
         addParam(ParamWidget::create<Trimpot>(Vec(itempos.x + trimpotleft, itempos.y + trimpottop + 18), module, numsliders + paramindex, -1, 1, 0));
 
         {
@@ -274,7 +274,7 @@ JSFXModuleWidget::JSFXModuleWidget(JSFXModule *module) : ModuleWidget(module) {
 
         auto itempos = cursor.NextBox(height);
 
-        addInput(Port::create<PJ301MPort>(Vec(itempos.x, itempos.y + 25), Port::INPUT, module, module->_jsusfx->numInputs + paramindex));
+        addInput(Port::create<PJ301MPort>(Vec(itempos.x, itempos.y + 25), Port::INPUT, module, _jsusfx->numInputs + paramindex));
         addParam(ParamWidget::create<Trimpot>(Vec(itempos.x + trimpotleft, itempos.y + trimpottop + 25), module, numsliders + paramindex, -1, 1, 0));
 
         {
@@ -314,7 +314,7 @@ JSFXModuleWidget::JSFXModuleWidget(JSFXModule *module) : ModuleWidget(module) {
 
   // Add outputs
   cursor.StartColumn(90, 30);
-  for (int outputid = 0; outputid < module->_jsusfx->numOutputs; outputid += 1) {
+  for (int outputid = 0; outputid < _jsusfx->numOutputs; outputid += 1) {
     auto pos = cursor.NextBox();
 
     {
@@ -347,7 +347,7 @@ JSFXModuleWidget::JSFXModuleWidget(JSFXModule *module) : ModuleWidget(module) {
   {
     auto label = new Label();
     label->color = nvgRGB(0x00, 0x00, 0x00);
-    label->text = module->_jsusfx->displayname();
+    label->text = _jsusfx->displayname();
     label->box.pos.x = 0;
     label->box.size.x = box.size.x;
     label->box.pos.y = RACK_GRID_WIDTH / 2.f; 

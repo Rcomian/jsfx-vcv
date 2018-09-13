@@ -7,7 +7,7 @@
 
 struct JSFXModuleWidget : rack::ModuleWidget {
   rack::Panel *panel;
-	JSFXModuleWidget(JSFXModule *module);
+	JSFXModuleWidget(JSFXModule *module, JsusFxVCV* jsusfx);
   void draw(NVGcontext *vg) override;
   JsusFxVCV* _jsusfx;
   JsusFxGfx_VCV* _jsusfx_gfx;
