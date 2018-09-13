@@ -50,7 +50,7 @@ void JSFXModule::onSampleRateChange() {
 void JSFXModule::step() {
   auto tempoinput = _jsusfx->numInputs + _jsusfx->numsliders();
   if (inputs[tempoinput].active) {
-    *_jsusfx->tempo = pow(2,inputs[tempoinput].value) * 120;
+    *_jsusfx->tempo = pow(2.0f,inputs[tempoinput].value) * 120.0f;
   }
 
   for (int c = 0; c < _jsusfx->numInputs; c += 1) {
