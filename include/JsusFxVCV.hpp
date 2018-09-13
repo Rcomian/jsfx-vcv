@@ -18,6 +18,5 @@ public:
 
     void displayError(const char *fmt, ...) override;
 
-private:
     std::string effectPath;
 };

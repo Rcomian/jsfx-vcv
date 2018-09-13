@@ -361,6 +361,17 @@ JSFXModuleWidget::JSFXModuleWidget(JSFXModule *module, JsusFxVCV* jsusfx) : Modu
   addChild(Widget::create<ScrewSilver>(Vec(box.size.x - 30, 0)));
   addChild(Widget::create<ScrewSilver>(Vec(box.size.x - 30, module_height - 15)));
 
+  // Add filename
+  {
+    auto label = new Label();
+    label->color = nvgRGB(0x00, 0x00, 0x00);
+    label->text = _jsusfx->effectPath;
+    label->box.pos.x = RACK_GRID_WIDTH * 3;
+    label->box.size.x = box.size.x - RACK_GRID_WIDTH * 6;
+    label->box.pos.y = box.size.y - RACK_GRID_WIDTH - 4; 
+    label->alignment = Label::CENTER_ALIGNMENT;
+    addChild(label);
+  }
 }
 
 void JSFXModuleWidget::draw(NVGcontext *vg) {
