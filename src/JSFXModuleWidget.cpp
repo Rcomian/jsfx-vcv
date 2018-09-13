@@ -146,6 +146,14 @@ JSFXModuleWidget::JSFXModuleWidget(JSFXModule *module, JsusFxVCV* jsusfx) : Modu
   for (auto slider : _jsusfx->sliders) {
     if (slider.exists) {
 
+      slider.desc[63] = '\0';
+      std::string slidername = std::string(slider.desc);
+      if (slidername[0] == '-') {
+        // remove the leading - if we have one
+        // we still show the controls even if they're meant to be hidden
+        slidername = slidername.substr(1);
+      }
+
       if (!slider.isEnum) {
         auto itempos = cursor.NextBox(70);
 
@@ -163,9 +171,8 @@ JSFXModuleWidget::JSFXModuleWidget(JSFXModule *module, JsusFxVCV* jsusfx) : Modu
 
         {
           auto label = new Label();
-          slider.desc[63] = '\0';
           label->color = nvgRGB(0x00, 0x00, 0x00);
-          label->text = slider.desc;
+          label->text = slidername;
           label->box.pos.x = itempos.x + 33 + cvoffset;
           label->box.pos.y = itempos.y; 
           label->box.size.x = 100;
@@ -180,9 +187,9 @@ JSFXModuleWidget::JSFXModuleWidget(JSFXModule *module, JsusFxVCV* jsusfx) : Modu
 
         {
           auto label = new Label();
-          slider.desc[63] = '\0';
+          slidername[63] = '\0';
           label->color = nvgRGB(0x00, 0x00, 0x00);
-          label->text = slider.desc;
+          label->text = slidername;
           label->box.pos.x = itempos.x - 5;
           label->box.pos.y = itempos.y; 
           label->box.size.x = 175;
@@ -193,7 +200,6 @@ JSFXModuleWidget::JSFXModuleWidget(JSFXModule *module, JsusFxVCV* jsusfx) : Modu
 
         {
           auto label = new Label();
-          slider.desc[63] = '\0';
           label->color = nvgRGB(0x00, 0x00, 0x00);
           label->text = slider.enumNames[0];
           label->box.pos.x = itempos.x + 20 + cvoffset;
@@ -204,7 +210,6 @@ JSFXModuleWidget::JSFXModuleWidget(JSFXModule *module, JsusFxVCV* jsusfx) : Modu
 
         {
           auto label = new Label();
-          slider.desc[63] = '\0';
           label->color = nvgRGB(0x00, 0x00, 0x00);
           label->text = slider.enumNames[1];
           label->box.pos.x = itempos.x + 20 + cvoffset;
@@ -220,9 +225,8 @@ JSFXModuleWidget::JSFXModuleWidget(JSFXModule *module, JsusFxVCV* jsusfx) : Modu
 
         {
           auto label = new Label();
-          slider.desc[63] = '\0';
           label->color = nvgRGB(0x00, 0x00, 0x00);
-          label->text = slider.desc;
+          label->text = slidername;
           label->box.pos.x = itempos.x - 5;
           label->box.pos.y = itempos.y; 
           label->box.size.x = 175;
@@ -233,7 +237,6 @@ JSFXModuleWidget::JSFXModuleWidget(JSFXModule *module, JsusFxVCV* jsusfx) : Modu
 
         {
           auto label = new Label();
-          slider.desc[63] = '\0';
           label->color = nvgRGB(0x00, 0x00, 0x00);
           label->text = slider.enumNames[0];
           label->box.pos.x = itempos.x + 20 + cvoffset;
@@ -244,7 +247,6 @@ JSFXModuleWidget::JSFXModuleWidget(JSFXModule *module, JsusFxVCV* jsusfx) : Modu
 
         {
           auto label = new Label();
-          slider.desc[63] = '\0';
           label->color = nvgRGB(0x00, 0x00, 0x00);
           label->text = slider.enumNames[1];
           label->box.pos.x = itempos.x + 20 + cvoffset;
@@ -255,7 +257,6 @@ JSFXModuleWidget::JSFXModuleWidget(JSFXModule *module, JsusFxVCV* jsusfx) : Modu
 
         {
           auto label = new Label();
-          slider.desc[63] = '\0';
           label->color = nvgRGB(0x00, 0x00, 0x00);
           label->text = slider.enumNames[2];
           label->box.pos.x = itempos.x + 20 + cvoffset;
@@ -279,9 +280,8 @@ JSFXModuleWidget::JSFXModuleWidget(JSFXModule *module, JsusFxVCV* jsusfx) : Modu
 
         {
           auto label = new Label();
-          slider.desc[63] = '\0';
           label->color = nvgRGB(0x00, 0x00, 0x00);
-          label->text = slider.desc;
+          label->text = slidername;
           label->box.pos.x = itempos.x - 5;
           label->box.pos.y = itempos.y; 
           label->box.size.x = 175;
@@ -295,7 +295,6 @@ JSFXModuleWidget::JSFXModuleWidget(JSFXModule *module, JsusFxVCV* jsusfx) : Modu
 
         for (uint i = 0; i < slider.enumNames.size(); i += 1) {
           auto label = new Label();
-          slider.desc[63] = '\0';
           label->color = nvgRGB(0x00, 0x00, 0x00);
           label->text = slider.enumNames[i];
           label->box.pos.x = itempos.x + 33 + cvoffset;
