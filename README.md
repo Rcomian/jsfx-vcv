@@ -57,8 +57,8 @@ Some plugins use the Tempo to do some calculation. To support this, every module
 
 **Conversions:**
 
-V = log(BPM/120, 2)
-BPM = pow(2,V) * 120
+* V = log(BPM/120, 2)
+* BPM = pow(2,V) * 120
 
 ## Inputs & CV Control
 
